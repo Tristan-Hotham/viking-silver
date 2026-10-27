@@ -1,0 +1,176 @@
+area,settlements,norse,country,median_hoard_km,share,viking_hoards,age_hoards
+Lincolnshire,926,294,England,102.7,0.3175,0,0
+North Yorkshire,1155,186,England,19.5,0.161,5,6
+Leicestershire,390,88,England,103.1,0.2256,0,0
+Cumberland,538,86,England,41.4,0.1599,0,0
+Westmorland and Furness,541,70,England,14.3,0.1294,2,3
+Norfolk,1068,67,England,89.3,0.0627,0,1
+East Riding of Yorkshire,353,51,England,40.2,0.1445,0,0
+Nottinghamshire,423,49,England,97.9,0.1158,0,0
+North Lincolnshire,108,35,England,56.6,0.3241,0,0
+Highland,1330,33,Scotland,182.5,0.0248,0,0
+Shetland Islands,266,31,Scotland,177.7,0.1165,0,1
+West Northamptonshire,258,26,England,64.8,0.1008,0,0
+Derbyshire,788,26,England,79.9,0.033,0,0
+Orkney Islands,168,20,Scotland,21.6,0.119,1,2
+Kirklees,282,19,England,41.9,0.0674,0,0
+Wakefield,181,19,England,35.8,0.105,0,0
+Leeds,282,18,England,21.3,0.0638,0,1
+Suffolk,922,18,England,54.5,0.0195,0,3
+Doncaster,119,16,England,53.8,0.1345,0,0
+North East Lincolnshire,45,14,England,78.3,0.3111,0,0
+Lancashire,772,13,England,18.2,0.0168,3,3
+County Durham,433,12,England,47.7,0.0277,0,0
+Bradford,253,10,England,27.2,0.0395,0,0
+Redcar and Cleveland,52,10,England,43.2,0.1923,0,0
+North Northamptonshire,138,10,England,75.4,0.0725,0,0
+York,52,10,England,14.3,0.1923,0,1
+Rotherham,117,9,England,63.4,0.0769,0,0
+Essex,873,9,England,37.0,0.0103,1,1
+Sheffield,239,8,England,67.7,0.0335,0,0
+Wirral,61,8,England,33.1,0.1311,0,0
+City of Peterborough,61,7,England,72.0,0.1148,0,0
+Dumfries and Galloway,319,6,Scotland,46.9,0.0188,1,1
+Stockton-on-Tees,51,6,England,35.4,0.1176,0,0
+Warwickshire,474,6,England,74.1,0.0127,0,0
+Rutland,57,5,England,92.9,0.0877,0,0
+Northumberland,489,5,England,80.5,0.0102,0,2
+Barnsley,123,4,England,51.1,0.0325,0,0
+Sefton,40,4,England,35.8,0.1,0,1
+Surrey,488,4,England,57.7,0.0082,0,0
+Middlesbrough,22,4,England,36.3,0.1818,0,0
+Knowsley,30,4,England,31.6,0.1333,0,0
+Cambridgeshire,443,3,England,38.5,0.0068,0,0
+Kent,1207,2,England,99.4,0.0017,0,1
+Cheshire West and Chester,265,2,England,13.3,0.0075,1,1
+City of Derby,28,2,England,88.7,0.0714,0,0
+Calderdale,148,2,England,38.3,0.0135,0,0
+City of Kingston upon Hull,28,2,England,51.3,0.0714,0,0
+Oxfordshire,596,2,England,29.1,0.0034,1,1
+Liverpool,60,2,England,31.9,0.0333,0,0
+Gloucestershire,834,2,England,62.4,0.0024,0,0
+Isles of Scilly,13,2,England,360.5,0.1538,0,0
+Bedford,126,1,England,55.5,0.0079,0,0
+Bury,83,1,England,28.5,0.012,0,0
+Darlington,54,1,England,28.4,0.0185,0,0
+Cornwall,1122,1,England,254.4,0.0009,0,1
+City of Leicester,32,1,England,110.4,0.0312,0,0
+Hertfordshire,537,1,England,39.3,0.0019,0,0
+Staffordshire,847,1,England,55.3,0.0012,0,1
+Wigan,117,1,England,26.1,0.0085,0,0
+Rochdale,102,1,England,36.0,0.0098,0,0
+Perth and Kinross,285,1,Scotland,171.9,0.0035,0,0
+Southend-on-Sea,15,1,England,64.0,0.0667,0,0
+Oldham,167,1,England,43.2,0.006,0,0
+Gateshead,80,1,England,67.6,0.0125,0,0
+Greater London,690,1,England,59.7,0.0014,0,0
+Hartlepool,23,1,England,49.5,0.0435,0,0
+Hampshire,983,1,England,70.2,0.001,0,0
+Dudley,77,1,England,50.8,0.013,0,0
+Devon,1228,1,England,180.7,0.0008,0,0
+Milton Keynes,157,1,England,47.6,0.0064,0,0
+Aberdeen City,53,0,Scotland,222.8,0.0,0,0
+Bath and North East Somerset,201,0,England,101.9,0.0,0,0
+Birmingham,143,0,England,63.8,0.0,0,0
+Blackpool,23,0,England,27.0,0.0,0,0
+Blackburn with Darwen,85,0,England,11.6,0.0,0,0
+Blaenau Gwent,55,0,Wales,64.2,0.0,0,0
+Bolton,90,0,England,24.0,0.0,0,0
+"Bournemouth, Christchurch and Poole",98,0,England,117.3,0.0,0,0
+Bracknell Forest,48,0,England,30.9,0.0,0,0
+County of Herefordshire,669,0,England,23.6,0.0,1,1
+Coventry,77,0,England,86.1,0.0,0,0
+Conwy,127,0,Wales,12.3,0.0,1,1
+Clackmannanshire,21,0,Scotland,130.0,0.0,0,0
+City of Portsmouth,27,0,England,92.2,0.0,0,0
+City of Southampton,51,0,England,85.8,0.0,0,0
+City of Stoke-on-Trent,74,0,England,39.8,0.0,0,0
+City of Wolverhampton,77,0,England,55.3,0.0,0,0
+City of Plymouth,73,0,England,230.7,0.0,0,0
+City of Nottingham,37,0,England,106.6,0.0,0,0
+Buckinghamshire,416,0,England,24.2,0.0,0,1
+Central Bedfordshire,191,0,England,45.2,0.0,0,0
+Cheshire East,331,0,England,28.8,0.0,0,0
+Ceredigion,247,0,Wales,94.9,0.0,0,0
+City of Bristol,90,0,England,91.1,0.0,0,0
+City of Edinburgh,151,0,Scotland,125.9,0.0,0,0
+Bridgend,85,0,Wales,99.5,0.0,0,0
+Caerphilly,116,0,Wales,75.4,0.0,0,0
+Cardiff,67,0,Wales,91.1,0.0,0,0
+Carmarthenshire,339,0,Wales,114.6,0.0,0,0
+Angus,171,0,Scotland,204.6,0.0,0,0
+Aberdeenshire,494,0,Scotland,198.9,0.0,0,0
+Argyll and Bute,331,0,Scotland,147.3,0.0,0,0
+Isle of Wight,168,0,England,110.2,0.0,0,0
+Dundee City,25,0,Scotland,185.9,0.0,0,0
+Isle of Anglesey,148,0,Wales,38.3,0.0,0,0
+Inverclyde,58,0,Scotland,106.0,0.0,0,0
+Fife,267,0,Scotland,153.4,0.0,0,0
+Glasgow City,159,0,Scotland,94.5,0.0,0,0
+Flintshire,165,0,Wales,29.9,0.0,0,0
+Gwynedd,325,0,Wales,47.1,0.0,0,0
+Halton,58,0,England,21.6,0.0,0,0
+North Tyneside,44,0,England,79.2,0.0,0,0
+North Somerset,149,0,England,99.9,0.0,0,0
+North Lanarkshire,169,0,Scotland,97.3,0.0,0,0
+Na h-Eileanan an Iar,323,0,Scotland,245.2,0.0,0,0
+Newcastle upon Tyne,54,0,England,71.3,0.0,0,0
+Neath Port Talbot,95,0,Wales,97.7,0.0,0,0
+Newport,76,0,Wales,78.2,0.0,0,0
+North Ayrshire,107,0,Scotland,79.9,0.0,0,0
+Moray,174,0,Scotland,161.8,0.0,0,0
+Medway,58,0,England,74.8,0.0,0,0
+Luton,20,0,England,48.2,0.0,0,0
+Manchester,51,0,England,41.6,0.0,0,0
+Merthyr Tydfil,51,0,Wales,72.9,0.0,0,0
+Monmouthshire,210,0,Wales,58.3,0.0,0,0
+Midlothian,77,0,Scotland,123.1,0.0,0,0
+Denbighshire,123,0,Wales,34.4,0.0,0,0
+Falkirk,98,0,Scotland,115.7,0.0,0,0
+East Sussex,448,0,England,117.7,0.0,0,0
+East Lothian,99,0,Scotland,141.8,0.0,0,0
+East Renfrewshire,41,0,Scotland,86.6,0.0,0,0
+East Dunbartonshire,42,0,Scotland,103.4,0.0,0,0
+East Ayrshire,93,0,Scotland,55.7,0.0,0,0
+Dorset,710,0,England,132.8,0.0,0,0
+Solihull,68,0,England,69.9,0.0,0,0
+Scottish Borders,214,0,Scotland,105.9,0.0,0,0
+Sandwell,86,0,England,56.4,0.0,0,0
+Salford,61,0,England,34.1,0.0,0,0
+Renfrewshire,69,0,Scotland,93.0,0.0,0,0
+Rhondda Cynon Taf,139,0,Wales,85.8,0.0,0,0
+Reading,15,0,England,21.3,0.0,0,0
+Pembrokeshire,369,0,Wales,159.8,0.0,0,0
+Powys,504,0,Wales,51.7,0.0,0,0
+Stockport,74,0,England,48.4,0.0,0,0
+Stirling,92,0,Scotland,126.8,0.0,0,0
+St. Helens,66,0,England,32.1,0.0,0,0
+South Tyneside,31,0,England,76.3,0.0,0,0
+South Gloucestershire,171,0,England,83.2,0.0,0,0
+South Lanarkshire,177,0,Scotland,84.5,0.0,0,0
+Somerset,1166,0,England,132.7,0.0,0,0
+South Ayrshire,81,0,Scotland,49.7,0.0,0,0
+Shropshire,967,0,England,35.6,0.0,0,0
+Slough,15,0,England,32.6,0.0,0,0
+Telford and Wrekin,129,0,England,47.7,0.0,0,0
+The City of Brighton and Hove,32,0,England,107.8,0.0,0,0
+Swansea,173,0,Wales,110.1,0.0,0,0
+Swindon,82,0,England,54.3,0.0,0,0
+Tameside,82,0,England,48.4,0.0,0,0
+Sunderland,101,0,England,67.5,0.0,0,0
+Warrington,84,0,England,31.1,0.0,0,0
+Walsall,64,0,England,62.5,0.0,0,0
+Trafford,34,0,England,37.1,0.0,0,0
+Torfaen,73,0,Wales,67.5,0.0,0,0
+Thurrock,28,0,England,62.8,0.0,0,0
+Torbay,36,0,England,210.1,0.0,0,0
+West Lothian,90,0,Scotland,110.0,0.0,0,0
+West Dunbartonshire,38,0,Scotland,104.5,0.0,0,0
+West Sussex,487,0,England,87.9,0.0,0,0
+West Berkshire,170,0,England,30.7,0.0,0,0
+Windsor and Maidenhead,71,0,England,25.5,0.0,0,0
+Wiltshire,753,0,England,81.3,0.0,0,0
+Wokingham,50,0,England,27.0,0.0,0,0
+Worcestershire,676,0,England,41.1,0.0,0,0
+Wrexham,161,0,Wales,22.9,0.0,0,0
+the Vale of Glamorgan,118,0,Wales,102.5,0.0,0,0
