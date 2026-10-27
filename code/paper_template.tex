@@ -1,0 +1,211 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\headfont{Inter}[UprightFont=*-ExtraBold,BoldFont=*-ExtraBold,Extension=.otf,Path=/usr/share/fonts/opentype/inter/]
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{graphicx,booktabs,float,caption,array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{setspace}
+\setstretch{1.05}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\titleformat{\section}{\headfont\Large}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\headfont\large}{\thesubsection}{0.8em}{}
+\captionsetup{font=small,labelfont=bf}
+\urlstyle{same}
+\hypersetup{pdftitle={Silver and Names: Viking Hoards and Norse Place Names in Britain},pdfauthor={Tristan Hotham}}
+
+\begin{document}
+\begin{center}
+{\Large\bfseries Silver and Names: Viking Hoards and Norse\\[2pt] Place Names in Britain\par}
+\vspace{1.2em}
+{\large Tristan Hotham\par}
+\vspace{0.3em}
+{\small Independent researcher\\
+ORCID: 0000-0003-4931-9349\\
+DOI: \href{https://doi.org/10.5281/zenodo.23677169}{https://doi.org/10.5281/zenodo.23677169}\par}
+\vspace{0.8em}
+2026
+\end{center}
+
+\begin{quote}
+\small
+\begin{center}\textbf{Abstract}\end{center}
+The Viking Age left two widespread kinds of evidence on the map of Britain: hoards of buried silver, and settlement names with Old Norse elements such as -by, -thorpe and -thwaite. Both are used to map Scandinavian activity, but they are rarely compared directly. I compare them using the {{counts.hoards_viking_gb|int}} Viking hoards in Wikipedia's List of hoards in Great Britain and all {{counts.settlements|int}} settlements in Ordnance Survey's OS Open Names, of which {{counts.norse_core|int}} carry a Norse element under narrow, documented rules. Around the {{counts.vik_in_stats|int}} hoards that can be placed to village level, {{overlap.r15.viking_mean|pct1}} of settlements within 15 km have a Norse name, {{overlap.r15.viking_vs_settlements_gb.ratio|f2}} times the mean for randomly chosen settlements (one-sided p = {{overlap.r15.viking_vs_settlements_gb.p_one_sided|f3}} from 20,000 draws), and clearly more than around hoards of other periods from the same list (Mann-Whitney p = {{overlap.r15.mw_viking_vs_other_periods_p|f3}}). The result holds at 10 and 25 km and with a broader element set. Twelve of the fourteen English Viking hoards lie north and east of an approximate Danelaw line. The agreement has striking exceptions. Five hoards, all either from the late 9th century or the early 11th, have no Norse-named settlement within 15 km. Conversely, Lincolnshire holds {{lincolnshire.norse|int}} Norse-named settlements, {{lincolnshire.share_of_england_norse|pct0}} of England's, and no listed Viking hoard. Hoards are not unusually close to the coast or major rivers. The largest, Cuerdale on the Ribble, lies where Norse names are scarce. Silver and names broadly agree, but they record different things: settlement on one hand, and the movement and loss of wealth on the other.
+
+\textbf{Keywords:} Viking Age; hoards; place-names; Old Norse; Danelaw; Cuerdale; spatial analysis; open data
+\end{quote}
+
+\section{Introduction}
+
+In May 1840 workmen repairing the south bank of the River Ribble at Cuerdale, near Preston, found a lead box holding more than 8,600 pieces of silver: coins, jewellery, hacksilver and ingots, weighing 32 to 40 kg (Wikipedia contributors 2026c). The Cuerdale Hoard remains the giant among the Viking hoards of Britain and Ireland. Within 20 km of the find spot today are places called Kirkham, Ribby and Westby, names with elements that the standard reference lists give as Old Norse.
+
+Those are the two commonest kinds of evidence by which the Viking Age is mapped in Britain. Silver hoards were buried and never recovered; place names record where Scandinavian speakers named farms and villages, or influenced the names of places that already existed. Both have long been used to draw the extent of Scandinavian settlement and power, but they are produced by different processes. A hoard records an act of concealment and a failure to return, often in a crisis. A name records language in use over generations. There is no reason why the two maps must agree, and some reason to think they might not.
+
+This note asks three simple questions. Do Viking hoards sit in landscapes with more Norse place names than chance would give? Where is there silver without names? And where are there names without silver? I answer them with openly licensed data: the hoards listed on Wikipedia and the settlements in Ordnance Survey's OS Open Names gazetteer. An interactive version of the maps and charts is at \url{https://tristan-hotham.github.io/viking-silver/}.
+
+\section{Data}
+
+\subsection{Hoards}
+
+The hoards come from the Wikipedia articles List of hoards in Great Britain and List of hoards in Ireland (Wikipedia contributors 2026a, 2026b), read from their wikitext. Each list is a set of tables by period, and each table row gives the hoard, a sortable date, the place of discovery (usually with a coordinate at village level), the year of discovery, the current location and the contents. I take two sets.
+
+The \textit{Viking set} is every row in the lists' own ``Viking hoards'' tables, which the Great Britain list describes as hoards associated with Viking culture. After merging one duplicate (the list's Herefordshire Hoard row describes the same find as its Eye Hoard row), this gives {{counts.hoards_viking_tables|int}} hoards: {{counts.hoards_viking_gb|int}} in Great Britain and {{counts.hoards_viking_ie|int}} in Ireland. The \textit{Viking Age set} adds every other row whose sortable date in the list is between 793 and 1066, the conventional bounds of the Viking Age in Britain; this adds {{counts.hoards_viking_age_extra|int}} hoards, mostly from the lists' Anglo-Saxon and Pictish tables.
+
+Most hoards are located by the coordinate given in their list row. Rows without one were placed from their stated find place: Ashdon, Bolton Percy, Bucklesham, Hexham and Kirkoswald at the OS Open Names point for that village in the stated county, and Talnotrie at its Wikidata coordinate. Two hoards are excluded from the tests. The Galloway Hoard's find spot has not been made public, and the list gives only the county; it is not mapped. The Storr Rock Hoard is given only as Isle of Skye; I place it approximately at The Storr from its name, and leave it out of all tests. The Watlington coordinate is the town, as the find spot is not published. The Irish hoards are mapped but not tested, because the place-name data cover Great Britain only. This leaves {{counts.vik_in_stats|int}} Viking hoards in the tests ({{counts.age_in_stats|int}} in the Viking Age set). Of the hoards that also appear in Wikidata (CC0), {{counts.wikidata_matched|int}} matched by name, and the largest gap between the Wikidata and list coordinates is {{counts.wikidata_max_offset_km|f2}} km.
+
+As a baseline for where hoards of any date are found and recorded, I use the {{counts.other_periods_baseline|int}} other located hoards in the Great Britain list, from the Neolithic to the 20th century, most of them medieval or later. Coin and item counts are transcribed only where the contents column states a number; Cuerdale's count and weight come from the Wikipedia article on the hoard. Table~\ref{tab:hoards} lists the Viking set.
+
+{{TABLE_HOARDS}}
+
+\subsection{Settlements and Norse elements}
+
+The settlements are every populated place in OS Open Names (Ordnance Survey 2026a): {{counts.settlements|int}} cities, towns, villages, hamlets, suburban areas and other settlements. Each name is lower-cased and split into words on spaces and hyphens, and a rule must match a whole word. The core elements, with meanings taken only from cited sources, are: -by, ``settlement, village'' (Wikipedia contributors 2026d, 2026e); -thorpe, a secondary settlement or satellite farm (2026d, 2026e); -thwaite, a clearing or parcel of land (2026d, 2026e); -toft, a homestead (2026d, 2026e); kirk-, church (2026d); -scale, from Old Norse \textit{sk\'ali}, a shieling (English Place-Name Society, entry for Scaleby); and, in the far north, -ster and -bost, farm (2026d), and -bister, ``a farm or dwelling place'' (Shetland Amenity Trust 2020). A broad set adds -holme and -garth, which the same list gives as Norse or English, and Norse or Welsh.
+
+Rules are limited by area to avoid known false friends found by reading every Scottish and Welsh match and samples of English ones. Kirk counts only in England, because Scots \textit{kirk} also means church (Falkirk). -by counts in England and, in Scotland, only in Orkney, Shetland, Highland and Dumfries and Galloway; the Scots spelling -bie only in Dumfries and Galloway (Lockerbie). This removes look-alikes such as Abercrombie, Rescobie and Welsh Llangibby. -ster and -bister count only in Orkney, Shetland and Highland and never inside -chester, -caster, -minster or Gaelic -allister; -setter is left out for want of a citable gloss. The core set finds {{counts.norse_core|int}} Norse-named settlements: {{counts.elements.by|int}} with -by, {{counts.elements.thorpe|int}} with -thorpe, {{counts.elements.thwaite|int}} with -thwaite, {{counts.elements.ster|int}} with -ster, -bister or -bost, {{counts.elements.kirk|int}} with kirk-, {{counts.elements.toft|int}} with -toft and {{counts.elements.scale|int}} with -scale. The share is {{counts.norse_share_by_country.England|pct1}} of settlements in England, {{counts.norse_share_by_country.Scotland|pct1}} in Scotland and none in Wales.
+
+\subsection{Coast, rivers and the Danelaw}
+
+The coast is Natural Earth 1:10m land (public domain). Tidal water is the coast plus OS Open Rivers watercourses of form tidal river (Ordnance Survey 2026b). Major rivers are named OS Open Rivers watercourses at least 50 km long in total, joining same-named links whose ends lie within 3 km; {{rivers.n_major_rivers|int}} rivers qualify. The Danelaw line is an approximate, hand-placed tracing of the frontier described in the treaty of Alfred and Guthrum: up the Thames, up the Lea to its source, straight to Bedford, up the Ouse to Watling Street, along Watling Street to Wall near Lichfield, and then, as an assumption, straight to Chester. It is the line used in my earlier study of landscape words (Hotham 2026).
+
+\section{Methods}
+
+For each located hoard I count the OS Open Names settlements within 10, 15 and 25 km and the share of them with a core Norse element. The headline radius is 15 km, wide enough to hold a useful number of settlements and narrow enough to stay local. To ask whether the hoards' surroundings are more Norse than chance, I compute the same share around every settlement in Britain, then draw 20,000 random sets of settlements of the same size as the hoard set and compare the mean share. The one-sided p value is the proportion of random sets with a mean at least as high as the hoards'. Drawing settlements rather than random points means the baseline is a random inhabited place, not a random hillside.
+
+Hoards are not found at random either. They come to light where land is ploughed, built on or searched, and are listed when they become notable. To allow for this, I compare the Viking hoards with the hoards of other periods from the same list, and with the Viking Age hoards outside the Viking tables, using one-sided Mann-Whitney tests (Mann and Whitney 1947). I also report the share of each group north and east of the Danelaw line (England only), the distance from each Norse-named settlement to the nearest Viking hoard, and the median distance of each group to the coast, tidal water and major rivers, compared with a random sample of 8,000 settlements.
+
+Each Viking hoard receives a simple verdict: ``silver among names'' if its 15 km share is higher than that around at least 75\% of settlements, ``silver without names'' if there is no Norse-named settlement within 15 km, and ``a few names'' otherwise.
+
+\section{Results}
+
+\subsection{The two maps broadly agree}
+
+Figure~\ref{fig:map} shows the hoards over the Norse names. The names crowd into Yorkshire, Lincolnshire, Leicestershire and Nottinghamshire, the north-west, and the Northern Isles and Caithness. Most Viking hoards sit inside or at the edge of those concentrations.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.78\textwidth]{f_map.png}
+\caption{Viking hoards (sized by stated coins or items), other hoards and settlements with a Norse element in OS Open Names. Dashed: approximate Danelaw line.}\label{fig:map}
+\end{figure}
+
+Around the {{counts.vik_in_stats|int}} tested Viking hoards, the mean share of settlements within 15 km with a Norse name is {{overlap.r15.viking_mean|pct1}}. Around a random settlement it is {{overlap.r15.viking_vs_settlements_gb.random_mean|pct1}}, and more than half of all settlements have no Norse-named neighbour within 15 km at all. The ratio is {{overlap.r15.viking_vs_settlements_gb.ratio|f2}}, with a one-sided p of {{overlap.r15.viking_vs_settlements_gb.p_one_sided|f3}} (Table~\ref{tab:tests}). {{overlap.viking_top_quartile|int}} of the {{counts.vik_in_stats|int}} hoards lie in the most Norse quarter of Britain by this measure and {{overlap.viking_top_decile|int}} in the most Norse tenth (Figure~\ref{fig:share}). The median Viking hoard has a Norse-named settlement {{overlap.viking_median_nearest_norse_km|f1}} km away, against {{overlap.other_median_nearest_norse_km|f1}} km for hoards of other periods.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.8\textwidth]{f_share.png}
+\caption{Share of settlements within 15 km with a Norse element, for each tested Viking hoard. Open circles: none.}\label{fig:share}
+\end{figure}
+
+The result is not only a matter of where hoards in general are found. The {{counts.other_periods_baseline|int}} hoards of other periods average {{overlap.r15.other_periods_mean|pct1}}, {{overlap.r15.other_periods_vs_settlements_gb.ratio|f2}} times random, and the Viking hoards exceed them (Mann-Whitney p = {{overlap.r15.mw_viking_vs_other_periods_p|f3}}; Figure~\ref{fig:groups}). The ratio against random settlements holds at 10 km ({{overlap.r10.viking_vs_settlements_gb.ratio|f2}}) and 25 km ({{overlap.r25.viking_vs_settlements_gb.ratio|f2}}), for English hoards against English settlements ({{overlap.r15.viking_vs_settlements_england.ratio|f2}}, p = {{overlap.r15.viking_vs_settlements_england.p_one_sided|f3}}), and with the broad element set ({{overlap.broad15.ratio|f2}}). The comparison with the {{counts.other_dated_in_stats|int}} other Viking Age hoards is weaker: they average {{overlap.r15.other_dated_mean|pct1}}, lower than the Viking hoards, but the difference is not statistically secure with so few hoards (p = {{overlap.r15.mw_viking_vs_other_dated_p|f2}}).
+
+{{TABLE_TESTS}}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.72\textwidth]{f_groups.png}
+\caption{Mean Norse share around each group at three radii.}\label{fig:groups}
+\end{figure}
+
+\subsection{The Danelaw}
+
+In England, {{danelaw.norse_names.share|pct1}} of Norse-named settlements lie north and east of the approximate Danelaw line, against {{danelaw.settlements.share|pct1}} of all settlements (Figure~\ref{fig:danelaw}). So do {{danelaw.viking.inside|int}} of the {{danelaw.viking.n|int}} English Viking hoards ({{danelaw.viking.share|pct1}}), {{danelaw.other_dated.inside|int}} of {{danelaw.other_dated.n|int}} other Viking Age hoards, and {{danelaw.other_periods.share|pct1}} of hoards of other periods. Much of this reflects the line's geometry: everything in northern England is on the Danelaw side. The two English Viking hoards outside it are Watlington in Oxfordshire and Eye in Herefordshire, both dated by the list to the late 9th century and both containing coins of Alfred of Wessex and Ceolwulf II of Mercia.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.78\textwidth]{f_danelaw.png}
+\caption{Share of each group north and east of the approximate Danelaw line, England only.}\label{fig:danelaw}
+\end{figure}
+
+\subsection{Silver without names}
+
+Five tested Viking hoards have no Norse-named settlement within 15 km: Ashdon (Essex), Talnotrie (Galloway), Eye, Watlington and Bryn Maelgwyn (near Deganwy, Conwy). Four are dated by the lists to the late 9th century, the period of the large Viking armies in England, and the fifth, Bryn Maelgwyn, with 204 pennies of Cnut, to the early 11th century. None is from the early or mid 10th century, when most of the hoards in the north of England were deposited. The simplest reading is that these are hoards of silver in movement, through campaigns, raids, tribute or trade, rather than the wealth of Scandinavian-speaking communities settled nearby.
+
+\subsection{Names without silver}
+
+The reverse gap is larger. Of the {{counts.norse_core|int}} Norse-named settlements, {{names_without_silver.norse_beyond_50km_share|pct0}} are more than 50 km from any tested Viking hoard. Of the {{rich_cells.n|int}} 10 km grid squares with at least five Norse-named settlements, only {{rich_cells.with_hoard_25km|int}} have a Viking hoard within 25 km. The gap is concentrated in the east Midlands (Table~\ref{tab:areas}, Figure~\ref{fig:gap}). Lincolnshire has {{lincolnshire.norse|int}} Norse-named settlements, {{lincolnshire.share|pct1}} of its settlements and {{lincolnshire.share_of_england_norse|pct1}} of England's, and no hoard of the Viking set or the Viking Age set; its median settlement is {{lincolnshire.median_hoard_km|int}} km from the nearest Viking hoard. The ten 10 km squares with the most Norse names in Britain are all in Lincolnshire and Leicestershire, and all lie {{top_cells_km.min|int}} to {{top_cells_km.max|int}} km from one.
+
+{{TABLE_AREAS}}
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.78\textwidth]{f_gap.png}
+\caption{Norse-named settlements in England and southern Scotland, shaded by distance to the nearest tested Viking hoard (capped at 130 km). Discs: Viking hoards.}\label{fig:gap}
+\end{figure}
+
+\subsection{Coast and rivers}
+
+Viking hoards are not unusually close to water. Their median distance to the open coast is {{water.coast_km.viking_median|f1}} km, against {{water.coast_km.settlements_median|f1}} km for settlements; to tidal water, {{water.tidal_km.viking_median|f1}} km against {{water.tidal_km.settlements_median|f1}} km; and to a major river, {{water.major_river_km.viking_median|f1}} km against {{water.major_river_km.settlements_median|f1}} km. None of the differences is significant. {{water.tidal_km.viking_within_5km|words}} hoards lie within 5 km of tidal water (Silverdale, Warton, Cuerdale, Furness, Skaill and Bryn Maelgwyn), but the group as a whole lies inland, with many in the Vale of York and its margins. Hoards of other periods and other Viking Age hoards are closer to tidal water ({{water.tidal_km.other_periods_median|f1}} and {{water.tidal_km.other_dated_median|f1}} km).
+
+\subsection{Cuerdale}
+
+Cuerdale is {{silver.cuerdale_share_of_listed_pieces|pct0}} of all the pieces counted in the {{silver.n_hoards_with_count|int}} Viking hoards for which the lists give a number, and about {{silver.cuerdale_vs_vale_of_york_items|f1}} times the next largest, the Vale of York Hoard (Figure~\ref{fig:sizes}). According to the Wikipedia article, its coins were buried between about 903 and 910, soon after the Vikings were expelled from Dublin in 902, when the Ribble valley was a route between the Irish Sea and York; one interpretation is a war chest for Norse exiles from Dublin, though other theories exist. In the data, the find place is {{cuerdale.major_river_km|f1}} km from the Ribble, {{cuerdale.tidal_km|f1}} km from tidal water and {{cuerdale.york_km|int}} km in a straight line from York. But only {{cuerdale.norse_n_15km|int}} of the {{cuerdale.settle_n_15km|int}} settlements within 15 km have Norse names ({{cuerdale.norse_share_15km|pct1}}), and {{cuerdale.norse_n_25km|int}} of {{cuerdale.settle_n_25km|int}} within 25 km. Lancashire as a whole has {{cuerdale.lancashire_norse|int}} Norse-named settlements out of {{cuerdale.lancashire_settlements|int}} ({{cuerdale.lancashire_share|pct1}}). The largest hoard is thus a case of silver with few names, consistent with silver in transit on a river route.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.75\textwidth]{f_sizes.png}
+\caption{Coins or items in each Viking hoard where the lists state a number (log scale). Includes the Galloway and Mullaghboden hoards, which are not in the spatial tests.}\label{fig:sizes}
+\end{figure}
+
+\section{Discussion}
+
+At the scale of Britain, the two traces of the Viking Age agree. Hoards that the lists call Viking lie, on average, in landscapes with about three times as many Norse settlement names as a random inhabited place, and more than hoards of other periods do. That is the expected result, and it is useful to see it confirmed with open data and explicit rules.
+
+The more interesting results are the exceptions. The hoards without names are early or late: late 9th century hoards from the years of the great armies, and an early 11th century hoard of Cnut's coins. They fit a picture in which silver moved with armies, tribute and trade across regions where Scandinavian speakers never settled densely. The 10th century hoards of Yorkshire and the north-west, by contrast, sit among names.
+
+Lincolnshire is the largest anomaly, and it should be read cautiously. The absence of a listed hoard is not the absence of Viking silver. The Wikipedia lists are a register of notable hoards with their own articles or references, and smaller finds of coins and hacksilver recorded by the Portable Antiquities Scheme or in Treasure reports are not in them. The right conclusion is that the large, famous hoards that dominate the public picture of Viking silver do not come from the most densely Norse-named part of England. Whether that holds for all recorded finds is the obvious next test.
+
+Cuerdale shows the same contrast at a single site. It is the richest hoard and lies near tidal water on a major river, yet the settlements around it carry few Norse names. Silver and names record different things: names record where Scandinavian speakers lived and farmed long enough to shape local naming; hoards record where wealth was concealed and lost, often on routes and in moments of crisis.
+
+\section{Limitations}
+
+The hoard sample is small ({{counts.vik_in_stats|int}} tested) and selective: it is the set of notable hoards on Wikipedia, which favours large, old or well-publicised finds. Of the Viking hoards in Great Britain with a year of discovery, {{silver.found_since_2000|int}} were found in 2000 or later. Most coordinates are village-level points from the lists rather than find spots, and some find spots are deliberately withheld. Dates are the lists' sortable dates, which are approximate.
+
+OS Open Names is a modern gazetteer. A Norse element in a name today does not show that Scandinavian speakers founded the place, and some names are later formations. My rules are narrow by design and will miss genuine Norse names (for example those with -setter, which I excluded for want of a citable gloss, or elements such as -beck that are not settlement generics) while still including some doubtful ones, such as Darby End in the West Midlands. The broad set, adding -holme and -garth, gives the same result. The Danelaw line is approximate and its north-western course is an assumption. The tests describe co-occurrence, not cause: both silver and names cluster in the north and east, and the comparison with hoards of other periods only partly removes the effects of land use, detecting and recording.
+
+\section{Conclusion}
+
+Viking hoards and Norse settlement names draw broadly the same map of Britain: the hoards sit in landscapes about three times as Norse-named as a random place, and nearly all the English ones lie on the Danelaw side. But the agreement is not complete. Silver without names belongs to the late 9th century armies and the early 11th century; names without silver fill Lincolnshire and Leicestershire; and the greatest hoard of all, Cuerdale, lies by the Ribble among few Norse names. Silver and names are two different records of the Viking Age, and their disagreements are as informative as their agreement.
+
+\section*{Data and code availability}
+
+The hoard table with locations and sources (\texttt{hoards.csv}), per-hoard measures (\texttt{hoard\_metrics.csv}), the baseline hoards, the Norse-named settlements (\texttt{norse\_names.csv}), 10 km grid and area tables, all reported numbers (\texttt{results.json}) and the analysis code are at \url{https://github.com/Tristan-Hotham/viking-silver} and in the Zenodo record for this paper (\url{https://doi.org/10.5281/zenodo.23677169}). An interactive version with layer toggles and hoard popups is at \url{https://tristan-hotham.github.io/viking-silver/}. Hoard data derive from Wikipedia (CC BY-SA 4.0), so the derived data and text are released under CC BY-SA 4.0; code is MIT. Contains OS data \textcopyright{} Crown copyright and database right 2026, used under the Open Government Licence v3.0 (The National Archives 2014).
+
+\section*{Funding and competing interests}
+
+This work received no funding. The author declares no competing interests.
+
+\section*{Use of AI}
+
+I wrote the text, with drafting and editing assistance from Claude (Anthropic), which also helped prepare the analysis code. I reviewed and checked all text and results.
+
+\section*{References}
+\small
+\setlength{\parskip}{0.35em}
+\hangindent=1.5em English Place-Name Society. Survey of English Place-Names: Scaleby, Cumberland. University of Nottingham. \url{https://epns.nottingham.ac.uk/browse/Cumberland/Scaleby/532847f8b47fc408f900102a-Scaleby}
+
+\hangindent=1.5em Hotham, T. (2026). Dale, Down, Fell and Beck: Mapping the Landscape Vocabulary of Great Britain. Zenodo. \url{https://doi.org/10.5281/zenodo.23674174}
+
+\hangindent=1.5em Mann, H. B. and Whitney, D. R. (1947). On a test of whether one of two random variables is stochastically larger than the other. \textit{Annals of Mathematical Statistics} 18(1), 50 to 60.
+
+\hangindent=1.5em Natural Earth. 1:10m Cultural and Physical Vectors: Land. Public domain. \url{https://www.naturalearthdata.com}
+
+\hangindent=1.5em Ordnance Survey (2026a). OS Open Names. Dataset, Open Government Licence v3.0. \url{https://www.ordnancesurvey.co.uk/products/os-open-names}
+
+\hangindent=1.5em Ordnance Survey (2026b). OS Open Rivers. Dataset, Open Government Licence v3.0. \url{https://www.ordnancesurvey.co.uk/products/os-open-rivers}
+
+\hangindent=1.5em Shetland Amenity Trust (2020). Place name of the week: Bisters. \url{https://www.shetlandamenity.org/place-name-of-the-week-bisters}
+
+\hangindent=1.5em The National Archives (2014). Open Government Licence for public sector information, version 3.0. \url{https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/}
+
+\hangindent=1.5em Wikidata contributors (2026). Wikidata. CC0. \url{https://www.wikidata.org}
+
+\hangindent=1.5em Wikipedia contributors (2026a). List of hoards in Great Britain. CC BY-SA 4.0. \url{https://en.wikipedia.org/wiki/List_of_hoards_in_Great_Britain}
+
+\hangindent=1.5em Wikipedia contributors (2026b). List of hoards in Ireland. CC BY-SA 4.0. \url{https://en.wikipedia.org/wiki/List_of_hoards_in_Ireland}
+
+\hangindent=1.5em Wikipedia contributors (2026c). Cuerdale Hoard. CC BY-SA 4.0. \url{https://en.wikipedia.org/wiki/Cuerdale_Hoard}
+
+\hangindent=1.5em Wikipedia contributors (2026d). List of generic forms in place names in the British Isles. CC BY-SA 4.0. \url{https://en.wikipedia.org/wiki/List_of_generic_forms_in_place_names_in_the_British_Isles}
+
+\hangindent=1.5em Wikipedia contributors (2026e). Toponymy of England. CC BY-SA 4.0. \url{https://en.wikipedia.org/wiki/Toponymy_of_England}
+
+\end{document}

@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Silver and Names</title>
+<meta name="description" content="The Vikings left two traces in Britain: buried silver and place names. Do the hoard map and the -by, -thorpe and -thwaite map agree? Where is there silver without names, or names without silver?">
+<meta property="og:title" content="Silver and Names: do Viking hoards and Norse place names tell the same story?">
+<meta property="og:description" content="{{counts.vik_in_stats|int}} Viking hoards against {{counts.norse_core|int}} Norse settlement names. Mostly they agree. Lincolnshire is the great exception.">
+<meta property="og:image" content="https://tristan-hotham.github.io/viking-silver/header.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800;9..144,900&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+/* Silver and slate. Silver/steel = hoards. Rust = Norse names. Moss = other hoards. */
+:root{
+  --bg:#ECEFEE; --panel:#E0E5E4; --fg:#17212A; --muted:#5B6870; --rule:#CBD3D3; --card:#F7F9F8; --border:#B9C3C4;
+  --silver:#4F6B82; --glint:#FFFFFF; --rust:#B4532A; --moss:#5C7F5A; --gold:#9C7A2B; --slate:#2E4558;
+  --sea:#DCE3E4; --dot:#8A979C;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#18232C; --panel:#1F2C36; --fg:#E6ECEE; --muted:#9AA8AF; --rule:#2F3D48; --card:#1C2832; --border:#3C4C57;
+  --silver:#D7E0E6; --glint:#FFFFFF; --rust:#E58A55; --moss:#8DB58A; --gold:#D8B45A; --slate:#9FB6C8;
+  --sea:#141D24; --dot:#71818A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#18232C; --panel:#1F2C36; --fg:#E6ECEE; --muted:#9AA8AF; --rule:#2F3D48; --card:#1C2832; --border:#3C4C57;
+  --silver:#D7E0E6; --glint:#FFFFFF; --rust:#E58A55; --moss:#8DB58A; --gold:#D8B45A; --slate:#9FB6C8;
+  --sea:#141D24; --dot:#71818A; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.62 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+.wrap{max-width:680px;margin:0 auto;padding-block:28px 64px}
+.wrap .bleed{width:min(1080px,calc(100vw - 32px));margin-left:calc((100% - min(1080px,100vw - 32px))/2);margin-right:0}
+a{color:inherit;text-decoration-color:var(--rust);text-underline-offset:3px}
+.kicker{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kicker b{background:var(--slate);color:var(--bg);padding:5px 8px;font-weight:500}
+header.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:end;border-bottom:6px double var(--fg);padding-bottom:22px;margin-top:18px}
+h1{font:900 clamp(54px,13vw,112px)/.86 var(--display);letter-spacing:-.02em;margin:0;text-wrap:balance;font-variation-settings:"SOFT" 50}
+h1 em{font-style:normal;color:var(--rust)}
+h1 span.s{color:var(--silver)}
+.mark{width:clamp(92px,21vw,170px);height:auto;display:block}
+.dek{grid-column:1/-1;font-size:21px;line-height:1.42;margin:8px 0 0;max-width:44ch}
+.byline{font:400 13px/1.4 var(--mono);color:var(--muted);margin-top:14px}
+h2{font:800 34px/1.04 var(--display);letter-spacing:-.01em;margin:52px 0 10px;text-wrap:balance}
+h2 .n{font:500 13px/1 var(--mono);color:var(--rust);display:block;letter-spacing:.1em;margin-bottom:10px}
+h3{font:600 20px/1.25 var(--display);margin:28px 0 6px}
+p{margin:0 0 16px}
+.lede::first-letter{font:900 72px/.8 var(--display);float:left;margin:6px 10px 0 0;color:var(--silver)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0 8px}
+.stats div{background:var(--card);padding:14px 12px}
+.stats b{display:block;font:900 clamp(28px,6vw,40px)/1 var(--display);color:var(--fg)}
+.stats b.h{color:var(--rust)}.stats b.s{color:var(--silver)}
+.stats span{font:400 12px/1.35 var(--mono);color:var(--muted);display:block;margin-top:6px}
+@media (max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.figure{margin:26px 0 30px}
+.fig-h{font:600 19px/1.25 var(--display);margin:0 0 4px}
+.fig-sub{font:400 13px/1.45 var(--mono);color:var(--muted);margin:0 0 12px}
+.src{font:400 12px/1.45 var(--mono);color:var(--muted);margin-top:10px}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--mono);fill:var(--fg)}
+.lab{font-size:12px}.lab.m{fill:var(--muted)}.lab.b{font-weight:500}.lab.s{font-size:11px}
+.tip{position:absolute;pointer-events:none;background:var(--fg);color:var(--bg);font:400 12px/1.45 var(--mono);padding:8px 10px;border-radius:3px;max-width:270px;z-index:1000;transform:translate(-50%,calc(-100% - 12px));display:none}
+.tip b{font-weight:500}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.btn{font:500 12px/1 var(--mono);background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:3px;padding:8px 10px;cursor:pointer;min-height:36px}
+.btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;flex-wrap:wrap}
+.seg .btn{border:0;border-radius:0;border-right:1px solid var(--border)}
+.seg .btn:last-child{border-right:0}
+select{font:400 13px/1 var(--mono);background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:3px;padding:8px;min-height:36px;max-width:100%}
+.mapgrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.mapgrid{grid-template-columns:1fr}}
+#map{height:clamp(440px,74vh,660px);border:1px solid var(--border);background:var(--sea);border-radius:2px;z-index:0}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font:400 12px/1.3 var(--mono);color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.legend i.ln{width:18px;height:0;border-radius:0;border-top:2px dashed var(--fg);vertical-align:3px}
+.side{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--silver);padding:12px 14px;font:400 13px/1.5 var(--mono)}
+.card.empty{border-left-color:var(--border);color:var(--muted)}
+.card b.t{font:600 18px/1.2 var(--display);display:block;margin-bottom:6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:6px 0 8px}
+.card dt{color:var(--muted)}.card dd{margin:0;overflow-wrap:anywhere}
+.toplist{list-style:none;margin:0;padding:0;font:400 12.5px/1.3 var(--mono);max-height:330px;overflow:auto;border:1px solid var(--rule);background:var(--card)}
+.toplist li{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:8px;padding:7px 10px;border-bottom:1px solid var(--rule);cursor:pointer;align-items:center}
+.toplist li:hover,.toplist li:focus-visible{background:var(--panel);outline:none}
+.toplist .v{color:var(--muted)}
+.toplist .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toplist i{width:10px;height:10px;border-radius:50%;display:block}
+.pull{font:600 26px/1.25 var(--display);border-left:6px solid var(--silver);padding:4px 0 4px 18px;margin:30px 0}
+.note{background:var(--panel);border:1px solid var(--rule);padding:14px 16px;font-size:16px;margin:22px 0}
+.note h3{margin-top:0}
+table.t{width:100%;border-collapse:collapse;font:400 13px/1.35 var(--mono)}
+table.t th{text-align:left;font-weight:500;color:var(--muted);border-bottom:2px solid var(--fg);padding:6px 8px 6px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:7px 8px 7px 0;vertical-align:top}
+table.t td.num,table.t th.num{text-align:right}
+table.t td.z{color:var(--rust);font-weight:500}
+.tablewrap{overflow-x:auto}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.cta a{font:500 13px/1 var(--mono);text-decoration:none;border:1px solid var(--fg);padding:11px 14px;border-radius:3px}
+.cta a.p{background:var(--slate);border-color:var(--slate);color:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 18px;padding:0;list-style:none}
+.chips li{font:400 12.5px/1 var(--mono);border:1px solid var(--border);background:var(--card);padding:7px 9px;border-radius:14px}
+.chips li b{color:var(--rust);font-weight:500}
+footer{border-top:6px double var(--fg);margin-top:56px;padding-top:16px;font:400 13px/1.55 var(--mono);color:var(--muted)}
+footer p{margin:0 0 10px}
+.theme{position:fixed;right:12px;bottom:12px;z-index:1001}
+.leaflet-container{font:400 12px/1.4 var(--mono);background:var(--sea)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card);color:var(--fg);border-radius:3px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.leaflet-popup-content{margin:10px 12px;font:400 12.5px/1.45 var(--mono)}
+.leaflet-popup-content b{font:600 15px/1.2 var(--display);display:block;margin-bottom:4px}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--card) 85%,transparent)!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--fg)!important}
+.leaflet-popup-content a{color:var(--rust)}
+.leaflet-bar a{background:var(--card);color:var(--fg);border-bottom-color:var(--border)}
+.leaflet-bar a:hover{background:var(--panel)}
+.leaflet-bar{border:1px solid var(--border)!important}
+@media print{.theme,.controls{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="kicker"><b>Data study</b><span>Vikings × place names</span><span>Britain and Ireland</span></div>
+<header class="hero">
+  <h1><span class="s">Silver</span> and <em>names</em></h1>
+  <svg class="mark" viewBox="-100 -100 200 200" aria-hidden="true"><g id="heroMark"></g></svg>
+  <p class="dek">The Vikings left two kinds of trace in Britain: buried silver, and the names of the places they farmed. Do the two maps agree? And where is there silver without names, or names without silver?</p>
+</header>
+<div class="byline">Dr Tristan Hotham, Independent researcher · October 2026 · Data: Wikipedia lists of hoards, OS Open Names, OS Open Rivers</div>
+
+<div class="stats">
+  <div><b class="s">{{overlap.r15.viking_vs_settlements_gb.ratio|f1}}×</b><span>as many Norse names around the Viking hoards as around a random place</span></div>
+  <div><b>{{danelaw.viking.inside|int}} of {{danelaw.viking.n|int}}</b><span>English Viking hoards lie north and east of the Danelaw line</span></div>
+  <div><b class="h">{{lincolnshire.norse|int}}</b><span>Norse names in Lincolnshire, and not one hoard in the lists</span></div>
+  <div><b class="s">{{silver.cuerdale_items|int}}</b><span>pieces in the Cuerdale Hoard, found by the Ribble in 1840</span></div>
+</div>
+
+<p class="lede">In May 1840, workmen mending the embankment of the River Ribble at Cuerdale, near Preston, found a corroded lead chest holding more than 8,600 pieces of silver: coins, ingots, jewellery and chopped-up bullion, 32 to 40 kg of it. By the archaeologist Richard Hall's reckoning it is four times larger than any other Viking hoard from Britain or Ireland. Within 20 km, on the same map, are places called Kirkham, Ribby and Westby.</p>
+<p>Those are the two things the Vikings left behind on the ground. Silver, buried and never collected. And names: the farms and villages ending in -by, -thorpe, -thwaite and -toft, that historians have long read as marks of Scandinavian settlement. Both are used to draw the map of Viking Britain. I wanted to know whether they draw the same map.</p>
+<p>So I put {{counts.hoards_viking_gb|int}} Viking hoards from the Wikipedia lists of hoards in Great Britain against every settlement on the Ordnance Survey's gazetteer, {{counts.settlements|int}} of them, of which {{counts.norse_core|int}} carry a Norse element. Mostly the two maps agree, strongly. But there are some striking gaps, and the biggest gap is a whole county.</p>
+
+<h2><span class="n">01 · The map</span>Silver on the map of names</h2>
+<p>Silver discs are the Viking hoards, sized by how many pieces the list gives. Rust dots are settlements with a Norse element in their name. Switch on the density layer to see where the names crowd together, the hoards of other periods for comparison, and the approximate line of the Danelaw. Tap a hoard for its story.</p>
+<div class="figure bleed">
+  <div class="controls">
+    <button class="btn" id="bNames" aria-pressed="true">Norse names</button>
+    <button class="btn" id="bDens" aria-pressed="false">Name density</button>
+    <button class="btn" id="bAge" aria-pressed="true">Other hoards 793 to 1066</button>
+    <button class="btn" id="bOther" aria-pressed="false">Hoards of other periods</button>
+    <button class="btn" id="bDane" aria-pressed="true">Danelaw line</button>
+    <select id="elem" aria-label="Show one name element">
+      <option value="">All Norse elements</option>
+      <option value="by">-by ({{counts.elements.by|int}})</option>
+      <option value="thorpe">-thorpe ({{counts.elements.thorpe|int}})</option>
+      <option value="thwaite">-thwaite ({{counts.elements.thwaite|int}})</option>
+      <option value="toft">-toft ({{counts.elements.toft|int}})</option>
+      <option value="kirk">kirk- ({{counts.elements.kirk|int}})</option>
+      <option value="scale">-scale ({{counts.elements.scale|int}})</option>
+      <option value="ster">-ster, -bister, -bost ({{counts.elements.ster|int}})</option>
+    </select>
+  </div>
+  <div class="mapgrid">
+    <div>
+      <div id="map" role="application" aria-label="Map of Viking hoards and Norse place names in Britain"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="side">
+      <div class="card empty" id="card">Tap a silver disc, or pick a hoard from the list, to see what was found and how Norse its surroundings are.</div>
+      <div class="fig-h" style="margin-top:4px">The Viking hoards, oldest first</div>
+      <ol class="toplist" id="hlist"></ol>
+      <div class="src" style="margin-top:0">Dot colours: rust, many Norse names within 15 km (most Norse quarter of Britain); slate, none within 15 km; grey, a few, or not tested.</div>
+    </div>
+  </div>
+  <div class="src">Hoards: Wikipedia, List of hoards in Great Britain and List of hoards in Ireland (CC BY-SA 4.0); most points are the village-level coordinates the lists give. The Galloway Hoard is not mapped because its find spot has not been made public. Names: OS Open Names, settlements only. Danelaw line hand-placed from the treaty description, approximate.</div>
+</div>
+
+<h2><span class="n">02 · The test</span>Do the two maps agree?</h2>
+<p>To compare a hoard with the names around it, I drew a 15 km circle round each find place and counted the settlements inside: what share of them have a Norse name? Across Britain as a whole the answer is small. A typical place, picked at random from the gazetteer, has {{overlap.r15.viking_vs_settlements_gb.random_mean|pct1}} Norse names in its circle, and more than half of all places have none at all.</p>
+<p>Around the {{counts.vik_in_stats|int}} Viking hoards I could place to village level in Britain, the average is {{overlap.r15.viking_mean|pct1}}: {{overlap.r15.viking_vs_settlements_gb.ratio|f1}} times as high. In 20,000 random draws of {{counts.vik_in_stats|int}} places, a result that high came up with a probability of {{overlap.r15.viking_vs_settlements_gb.p_one_sided|f3}}. {{overlap.viking_top_quartile|int}} of the {{counts.vik_in_stats|int}} hoards sit in the most Norse quarter of Britain, and the median hoard has a Norse-named place {{overlap.viking_median_nearest_norse_km|f1}} km away, against {{overlap.settlements_median_nearest_norse_km|f1}} km for a typical settlement.</p>
+<div class="figure">
+  <div class="controls"><div class="seg" role="group" aria-label="Circle radius"><button class="btn" data-r="10" aria-pressed="false">10 km</button><button class="btn" data-r="15" aria-pressed="true">15 km</button><button class="btn" data-r="25" aria-pressed="false">25 km</button></div></div>
+  <div class="fig-h">How Norse is the ground around each hoard?</div>
+  <div class="fig-sub">Share of settlements with a Norse name within the circle. Each disc is one Viking hoard. Lines mark the averages for comparison groups.</div>
+  <div class="chart" id="share"></div>
+  <div class="src">Random places: 20,000 draws of {{counts.vik_in_stats|int}} settlements from OS Open Names. Other hoards: every other located hoard in the Great Britain list ({{counts.other_periods_baseline|int}}, from the Neolithic to the 20th century, most of them medieval or later).</div>
+</div>
+<p>A fair objection: maybe hoards of any date are found in the north and east, where farming, building and metal detecting turn up buried metal. So I ran the same test on the {{counts.other_periods_baseline|int}} other located hoards in the Great Britain list, from all other periods (most of them medieval or later). Their circles average {{overlap.r15.other_periods_mean|pct1}} Norse names, only {{overlap.r15.other_periods_vs_settlements_gb.ratio|f1}} times a random place. The Viking hoards are clearly more Norse than that (a one-sided rank test gives p = {{overlap.r15.mw_viking_vs_other_periods_p|f3}}). The result holds with 10 km circles ({{overlap.r10.viking_vs_settlements_gb.ratio|f1}} times) and 25 km circles ({{overlap.r25.viking_vs_settlements_gb.ratio|f1}} times), within England alone ({{overlap.r15.viking_vs_settlements_england.ratio|f1}} times), and with a broader set of names that adds -holme and -garth ({{overlap.broad15.ratio|f1}} times).</p>
+<p>One comparison is weaker. The {{counts.other_dated_in_stats|int}} hoards that the lists date to the Viking Age but file under Anglo-Saxon or Pictish hoards sit in less Norse country ({{overlap.r15.other_dated_mean|pct1}}), but with so few hoards on each side the gap could be chance (p = {{overlap.r15.mw_viking_vs_other_dated_p|f2}}).</p>
+<p class="pull">Where the Vikings buried silver, they, or people like them, also named farms. The two maps broadly agree.</p>
+
+<h2><span class="n">03 · The Danelaw</span>North and east of the line</h2>
+<p>In the late ninth century Alfred of Wessex and the Viking leader Guthrum agreed a frontier: up the Thames, up the Lea, to Bedford, up the Ouse and along Watling Street. Land north and east of it became the Danelaw. The line on the map is my approximate tracing of that description, then a straight line from Wall, near Lichfield, to Chester, as in my earlier study of landscape words.</p>
+<div class="figure">
+  <div class="fig-h">Share north and east of the Danelaw line (England only)</div>
+  <div class="fig-sub">For comparison, about half of all English settlements are on that side.</div>
+  <div class="chart" id="dane"></div>
+</div>
+<p>The Norse names are almost all on the Danelaw side: {{danelaw.norse_names.share|pct1}}, against {{danelaw.settlements.share|pct1}} of all English settlements. The Viking hoards follow: {{danelaw.viking.inside|words}} of the {{danelaw.viking.n|words}} in England. The two that do not are the Watlington Hoard in Oxfordshire and the Eye Hoard in Herefordshire, both dated by the list to the late 9th century and both holding coins of Alfred and of Ceolwulf II of Mercia. They look less like settlers' savings than like silver carried through a frontier zone in a time of war.</p>
+
+<h2><span class="n">04 · Silver without names</span>Five hoards in English-named country</h2>
+<p>Five of the {{counts.vik_in_stats|int}} Viking hoards have no Norse-named settlement at all within 15 km:</p>
+<ul class="chips" id="nonames"></ul>
+<p>Their stories fit. Ashdon in Essex, Watlington and Eye are all dated to the late 9th century, the years of the great Viking armies, when silver could move with soldiers rather than with settlers. Talnotrie is in Galloway, where my element list finds few Norse names: its nearest is Sorbie, 25 km away. Bryn Maelgwyn, near Deganwy on the north Welsh coast, held 204 pennies of Cnut and dates to the early 11th century, a generation or more after every other hoard in the set. These look like hoards on the move, not hoards at home.</p>
+
+<h2><span class="n">05 · Names without silver</span>Lincolnshire, the great exception</h2>
+<p>Now turn it round. Of all {{counts.norse_core|int}} Norse-named settlements, {{names_without_silver.norse_beyond_50km_share|pct0}} are more than 50 km from any Viking hoard in the lists. And one county stands out. Lincolnshire has {{lincolnshire.norse|int}} Norse-named settlements, {{lincolnshire.share|pct0}} of all its settlements and {{lincolnshire.share_of_england_norse|pct0}} of all of England's. It has no Viking hoard in the lists, and no hoard of any kind dated 793 to 1066. The typical Lincolnshire settlement is {{lincolnshire.median_hoard_km|int}} km from the nearest one.</p>
+<div class="figure">
+  <div class="fig-h">Where the names are, and where the silver is</div>
+  <div class="fig-sub">The twelve council areas with the most Norse settlement names. Rust zeros: no Viking hoard in the lists.</div>
+  <div class="tablewrap"><table class="t" id="areas"></table></div>
+  <div class="src">Areas are OS Open Names counties or unitary authorities. Hoards are assigned to the area of their nearest settlement.</div>
+</div>
+<p>The ten 10 km squares with the most Norse names in Britain are all in Lincolnshire and Leicestershire, places like Spilsby, Skendleby and Revesby. Every one of them is between {{top_cells_km.min|int}} and {{top_cells_km.max|int}} km from the nearest Viking hoard in the lists.</p>
+<p>I do not think this means the Lincolnshire Vikings had no silver. It means that the lists, and perhaps the finds themselves, are shaped by other things: where great hoards were buried in a crisis and never dug up, where the ground has been disturbed, where finds were reported and became famous enough for a Wikipedia article. The Wikipedia lists are a register of notable hoards, not of every coin found. A full count from the Portable Antiquities Scheme or the Treasure reports could look different, and that is the obvious next test. But on the evidence of the notable hoards, the densest Norse-named landscape in Britain is a silver blank.</p>
+
+<h2><span class="n">06 · Water</span>Not a coastal pattern</h2>
+<p>Vikings arrived by ship, so I expected hoards near the sea or big rivers. They are not, on this evidence. The median Viking hoard is {{water.coast_km.viking_median|f1}} km from the open coast and {{water.tidal_km.viking_median|f1}} km from tidal water (the sea or a tidal river), further than a typical settlement ({{water.coast_km.settlements_median|f1}} and {{water.tidal_km.settlements_median|f1}} km). For rivers at least 50 km long the hoards are no closer than ordinary places either ({{water.major_river_km.viking_median|f1}} km against {{water.major_river_km.settlements_median|f1}} km). A handful are right at the water's edge, Cuerdale on the Ribble among them, but the group as a whole lies inland, many of them in Yorkshire.</p>
+<div class="figure">
+  <div class="fig-h">Median distance to water</div>
+  <div class="fig-sub">Viking hoards against other hoards and against a sample of 8,000 settlements.</div>
+  <div class="chart" id="water"></div>
+  <div class="src">Coast: Natural Earth 1:10m land. Tidal water: the coast plus OS Open Rivers tidal rivers. Major rivers: named OS Open Rivers watercourses at least 50 km long.</div>
+</div>
+
+<h2><span class="n">07 · Cuerdale</span>The giant on the Ribble</h2>
+<p>Every story about Viking silver in Britain comes back to Cuerdale. The hoard was found on 15 May 1840 on the south bank of a bend in the Ribble, packed in a lead box. It held more than 8,600 items and weighed 32 to 40 kg, mostly bullion. Its coins were mostly from the Viking kingdoms of eastern England, with Wessex pennies and foreign coins, and it was buried between about 903 and 910, soon after the Vikings were expelled from Dublin in 902. One idea is that it was a war chest for Irish Norse exiles planning to retake Dublin, at a time when the Ribble valley was a route between the Irish Sea and York; there are other theories.</p>
+<div class="figure">
+  <div class="fig-h">How big is the biggest?</div>
+  <div class="fig-sub">Coins or items in each Viking hoard, as the lists give them (log scale). Approximate counts are marked "c.".</div>
+  <div class="chart" id="sizes"></div>
+  <div class="src">Cuerdale: Wikipedia, Cuerdale Hoard. Others: the Contents column of the Wikipedia lists, transcribed only where a number is stated.</div>
+</div>
+<p>Cuerdale alone is {{silver.cuerdale_share_of_listed_pieces|pct0}} of all the pieces counted across the {{silver.n_hoards_with_count|int}} Viking hoards for which a number is given, and about {{silver.cuerdale_vs_vale_of_york_items|int}} times the Vale of York Hoard, the next biggest.</p>
+<p>The surprise is the names. Cuerdale is only {{cuerdale.major_river_km|f1}} km from the Ribble and {{cuerdale.tidal_km|f1}} km from tidal water, and {{cuerdale.york_km|int}} km in a straight line from York. But of {{cuerdale.settle_n_15km|int}} settlements within 15 km, only {{cuerdale.norse_n_15km|words}} have Norse names; within 25 km there are {{cuerdale.norse_n_25km|words}}, out of {{cuerdale.settle_n_25km|int}}:</p>
+<ul class="chips" id="cuerdale"></ul>
+<p>Lancashire as a whole has {{cuerdale.lancashire_norse|int}} Norse-named settlements out of {{cuerdale.lancashire_settlements|int}}, or {{cuerdale.lancashire_share|pct1}}. My element list is deliberately narrow, counting only settlement names with the clearest elements, so it will miss some Norse names here as everywhere; but the contrast with Lincolnshire is still stark. The richest hoard sits in country with few names; the richest names sit in country with no hoards. That is what you would expect if Cuerdale was silver passing through, on a river road, rather than the wealth of the farms around it. Lancashire's other Viking hoards, at Silverdale and Warton, lie {{cuerdale.silverdale_warton_km|f1}} km apart on the edge of Morecambe Bay, where the names are thicker.</p>
+<p><a href="#" id="goCuerdale">Show Cuerdale and the Ribble on the map</a></p>
+
+<h2><span class="n">08 · Limits</span>What this can and cannot show</h2>
+<p><b>The hoards are a short, selective list.</b> {{counts.hoards_viking_gb|int}} Viking hoards in Great Britain, {{counts.vik_in_stats|int}} placed to village level, is not many, and they are the notable ones: hoards with enough history or publicity to be listed on Wikipedia. Of these, {{silver.found_since_2000|words}} were found in 2000 or later. The Ireland list has only one Viking hoard, so I map the Irish hoards but test only Britain, where the place-name data are.</p>
+<p><b>Hoard points are approximate.</b> Most are the village-level points given in the lists. Watlington's point is the town, because the find spot has not been published. The Storr Rock Hoard is placed only roughly on Skye, from its name, and is left out of the tests. The Galloway Hoard's find spot is withheld, so it is not mapped.</p>
+<p><b>Names are modern.</b> OS Open Names is today's map. A -by name says a place has a Norse element now, not that Vikings founded it, and some names are later coinages or borrowed words. I counted only settlements, only elements that my cited sources give as Old Norse, and only where they are not likely to be false friends: kirk only in England, since Scots kirk means church too (Falkirk); -ster and -bister only in the Northern Isles and the Highland area; -by in Scotland only where Norse names are common. A sample check still finds doubtful cases, such as Darby End in the West Midlands. The broad set, adding -holme and -garth that can also be English or Welsh, gives the same result.</p>
+<p><b>Agreement is not cause.</b> Silver and names both cluster in the north and east because that is where Scandinavians had power, but also because of where land has been ploughed, built on and searched. The comparison with hoards of other periods helps with that, but cannot remove it.</p>
+
+<div class="note" id="method">
+  <h3>How I did this</h3>
+  <p><b>Hoards.</b> From the Wikipedia lists of hoards in Great Britain and in Ireland (CC BY-SA 4.0), I took every row in the lists' "Viking hoards" tables ({{counts.hoards_viking_tables|int}} hoards, after merging the list's Herefordshire Hoard row, which is the Eye Hoard). As a second, wider set I added every other row whose sortable date in the list is 793 to 1066 ({{counts.hoards_viking_age_extra|int}} more). Each hoard is placed at the coordinate given in its list row; the few without one were placed from the stated find place in OS Open Names, or from Wikidata (Talnotrie). Each hoard's source is recorded in the data. I checked the {{counts.wikidata_matched|int}} hoards that also appear in Wikidata: the largest gap between the two coordinates is {{counts.wikidata_max_offset_km|f2}} km. Counts of coins and items are taken only where the list states a number. Baseline: the {{counts.other_periods_baseline|int}} other located hoards in the Great Britain list.</p>
+  <p><b>Names.</b> Every OS Open Names populated place ({{counts.settlements|int}} cities, towns, villages, hamlets, suburbs and other settlements in Britain), split into words, tested for whole-word matches to -by, -thorpe, -thwaite, -toft, kirk-, -scale, and in the far north -ster, -bister and -bost. Meanings come only from cited sources: Wikipedia's List of generic forms in place names in the British Isles and Toponymy of England, the Survey of English Place-Names entry for Scaleby, and the Shetland Amenity Trust's note on -bister.</p>
+  <p><b>Tests.</b> For each point, the share of settlements within 10, 15 and 25 km that carry a Norse element. Random baseline: 20,000 draws of the same number of settlements. Rank tests compare the Viking hoards with the other-period hoards. Distances to coast, tidal water and major rivers use Natural Earth land and OS Open Rivers.</p>
+</div>
+<div class="cta">
+  <a class="p" href="https://github.com/Tristan-Hotham/viking-silver">Data and code</a>
+  <a href="https://doi.org/10.5281/zenodo.23677169">Paper (Zenodo)</a>
+  <a href="https://tristan-hotham.github.io/dale-down-fell-beck/">Beck, brook or burn: Britain's landscape words</a>
+  <a href="https://blog.tristanhotham.com/">More history data posts</a>
+</div>
+
+<footer>
+  <p>Dr Tristan Hotham, researcher on social media, campaigns and politics. Independent researcher. ORCID <a href="https://orcid.org/0000-0003-4931-9349">0000-0003-4931-9349</a>.</p>
+  <p>Cite as: Hotham, T. (2026) Silver and Names: Viking hoards and Norse place names in Britain. Zenodo. <a href="https://doi.org/10.5281/zenodo.23677169">https://doi.org/10.5281/zenodo.23677169</a></p>
+  <p>Hoards: Wikipedia, <a href="https://en.wikipedia.org/wiki/List_of_hoards_in_Great_Britain">List of hoards in Great Britain</a>, <a href="https://en.wikipedia.org/wiki/List_of_hoards_in_Ireland">List of hoards in Ireland</a> and <a href="https://en.wikipedia.org/wiki/Cuerdale_Hoard">Cuerdale Hoard</a>, CC BY-SA 4.0; cross-check against Wikidata (CC0). Contains OS data © Crown copyright and database right 2026: OS Open Names and OS Open Rivers, Open Government Licence v3.0. Coastline: Natural Earth (public domain). Base map tiles © Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community. Map library: Leaflet.</p>
+  <p>The derived data and text on this page are released under CC BY-SA 4.0, because the Wikipedia lists are. Code is MIT.</p>
+  <p>I wrote the text, with drafting and editing assistance from Claude (Anthropic), which also helped prepare the analysis code. I reviewed and checked all text and results.</p>
+</footer>
+</div>
+<div class="tip" id="tip"></div>
+<button class="btn theme" id="theme" aria-label="Toggle dark mode">◐</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/*DATA*/
+const NS = "http://www.w3.org/2000/svg";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const fmt = n => Math.round(n).toLocaleString("en-GB");
+const pc = (x, d = 0) => (x * 100).toFixed(d) + "%";
+const tip = document.getElementById("tip");
+function showTip(h, x, y) { tip.innerHTML = h; tip.style.display = "block"; const w = tip.offsetWidth; x = Math.max(w / 2 + 8, Math.min(innerWidth - w / 2 - 8, x)); tip.style.left = x + scrollX + "px"; tip.style.top = y + scrollY + "px"; }
+function hideTip() { tip.style.display = "none"; }
+function hover(node, h) { node.style.cursor = "pointer"; node.setAttribute("tabindex", "0"); const s = () => { const r = node.getBoundingClientRect(); showTip(h, r.left + r.width / 2, r.top); }; node.addEventListener("pointerenter", s); node.addEventListener("focus", s); node.addEventListener("pointerleave", hideTip); node.addEventListener("blur", hideTip); node.addEventListener("click", e => { e.stopPropagation(); s(); }); }
+document.addEventListener("click", hideTip);
+const redraws = [];
+function resp(box, render) { let last = 0; const go = (force) => { const w = Math.max(280, Math.round(box.clientWidth)); if (!force && Math.abs(w - last) < 4) return; last = w; box.innerHTML = ""; render(w, w < 560); }; new ResizeObserver(() => go()).observe(box); redraws.push(() => go(true)); go(); }
+const lbl = (svg, x, y, s, cls = "lab", anchor = "start") => { const t = el("text", { x, y, class: cls, "text-anchor": anchor }, svg); t.textContent = s; return t; };
+const R = D.R;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const isDark = () => { const r = document.documentElement; return r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+document.getElementById("theme").onclick = () => { const r = document.documentElement; const dark = isDark(); r.dataset.theme = dark ? "light" : "dark"; redraws.forEach(f => f()); window.__restyle && window.__restyle(); };
+const H = D.H;  // hoards with metrics
+const short = n => n.replace(/\s*\(.*\)\s*$/, "").replace(/ [Hh]oard$/, "").replace(/ Treasure$/, "");
+const VERD = { "silver among names": "Silver among names", "a few names": "A few names nearby", "silver without names": "Silver without names", "not located": "Not located" };
+
+/* hero mark: a silver penny with a beaded rim and a cross, over a scatter of name dots */
+(() => { const g = document.getElementById("heroMark");
+  for (let i = 0; i < 26; i++) { const a = i * 2.39996, r = 58 + (i * 37 % 40); el("circle", { cx: Math.cos(a) * r * .95, cy: Math.sin(a) * r * .95, r: 3.2, fill: "var(--rust)", opacity: .75 }, g); }
+  el("circle", { r: 54, fill: "var(--silver)", opacity: .95 }, g);
+  el("circle", { r: 54, fill: "none", stroke: "var(--fg)", "stroke-width": 2.5 }, g);
+  for (let i = 0; i < 36; i++) { const a = i / 36 * Math.PI * 2; el("circle", { cx: Math.cos(a) * 46, cy: Math.sin(a) * 46, r: 2.2, fill: "var(--bg)" }, g); }
+  el("circle", { r: 36, fill: "none", stroke: "var(--bg)", "stroke-width": 2 }, g);
+  el("path", { d: "M0 -26V26M-26 0H26", stroke: "var(--bg)", "stroke-width": 7, "stroke-linecap": "round" }, g);
+  [[-14, -14], [14, -14], [-14, 14], [14, 14]].forEach(([x, y]) => el("circle", { cx: x, cy: y, r: 4, fill: "var(--bg)" }, g));
+  el("path", { d: "M-30 -40 A54 54 0 0 1 22 -50", fill: "none", stroke: "var(--glint)", "stroke-width": 4, "stroke-linecap": "round", opacity: .8 }, g);
+})();
+
+/* ===== map ===== */
+(() => {
+  const card = document.getElementById("card");
+  if (!window.L) { document.getElementById("map").innerHTML = '<p style="padding:16px;font:400 13px/1.5 var(--mono)">The map library did not load. The charts below still work.</p>'; return; }
+  const map = L.map("map", { preferCanvas: true, scrollWheelZoom: false, zoomSnap: .25, minZoom: 4, maxZoom: 14 }).fitBounds([[50.0, -8.0], [59.6, 1.8]]);
+  map.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
+  map.on("focus", () => map.scrollWheelZoom.enable()); map.on("blur", () => map.scrollWheelZoom.disable());
+  const tileUrl = () => `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${isDark() ? "World_Dark_Gray_Base" : "World_Light_Gray_Base"}/MapServer/tile/{z}/{y}/{x}`;
+  const tiles = L.tileLayer(tileUrl(), { maxZoom: 14, attribution: 'Tiles &copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors, and the GIS user community · Hoards: Wikipedia (CC BY-SA) · Names: OS Open Names (OGL)' }).addTo(map);
+  [["dens", 405], ["names", 410], ["line", 415], ["other", 420], ["hoards", 430]].forEach(([n, z]) => { map.createPane(n); map.getPane(n).style.zIndex = z; });
+  map.getPane("dens").style.pointerEvents = "none"; map.getPane("line").style.pointerEvents = "none";
+  const R_ = n => L.canvas({ pane: n, padding: .3, tolerance: 5 });
+  const rN = R_("names"), rD = R_("dens"), rO = R_("other"), rH = R_("hoards");
+  const C = {}; const col = v => C[v] || (C[v] = css(v));
+  const lay = { names: L.layerGroup(), dens: L.layerGroup(), age: L.layerGroup(), other: L.layerGroup(), dane: L.layerGroup(), hoards: L.layerGroup().addTo(map) };
+  const on = { names: true, dens: false, age: true, other: false, dane: true }; let elem = "";
+  const ELAB = { by: "-by", thorpe: "-thorpe", thwaite: "-thwaite", toft: "-toft", kirk: "kirk-", scale: "-scale", ster: "-ster / -bister / -bost" };
+  function drawNames() { lay.names.clearLayers(); D.P.names.forEach(([la, lo, n, e]) => { if (elem && e !== elem) return;
+      L.circleMarker([la, lo], { renderer: rN, radius: 2.6, weight: 0, fillColor: col("--rust"), fillOpacity: .75 }).bindTooltip(`${esc(n)} <span style="opacity:.7">(${ELAB[e]})</span>`, { direction: "top" }).addTo(lay.names); }); }
+  function drawDens() { lay.dens.clearLayers(); D.P.grid.forEach(([la, lo, n, k]) => { if (!k) return;
+      L.circleMarker([la, lo], { renderer: rD, radius: 1.5 + Math.sqrt(k) * 2.1, weight: 0, fillColor: col("--rust"), fillOpacity: Math.min(.55, .12 + k / n), interactive: false }).addTo(lay.dens); }); }
+  function drawDane() { lay.dane.clearLayers(); L.polyline(D.P.danelaw, { pane: "line", color: col("--fg"), weight: 2, dashArray: "7 6", opacity: .8, interactive: false }).addTo(lay.dane);
+    L.marker([52.4, -1.45], { pane: "line", interactive: false, icon: L.divIcon({ className: "", iconSize: [0, 0], html: `<div style="font:500 11px/1.2 var(--mono);color:var(--fg);white-space:nowrap;transform:translate(-104%,4px);text-shadow:0 0 3px var(--bg),0 0 3px var(--bg)">Danelaw line (approx.)</div>` }) }).addTo(lay.dane); }
+  function drawOther() { lay.other.clearLayers(); D.P.other.forEach(([la, lo, n, s, d]) => L.circleMarker([la, lo], { renderer: rO, radius: 4, weight: 1.2, color: col("--moss"), fillColor: col("--moss"), fillOpacity: .25 })
+      .bindPopup(`<b>${esc(n)}</b>${esc(s)}<br>${esc(d)}<br><span style="opacity:.75">A hoard of another period, used as a baseline.</span>`).addTo(lay.other)); }
+  const radius = h => h.pieces ? 5 + Math.log10(h.pieces) * 3.6 : 6;
+  function popup(h) {
+    const share = h.norse_share_15km == null ? "not tested" : `${pc(h.norse_share_15km, 1)} of ${fmt(h.settle_n_15km)} settlements`;
+    return `<b>${esc(h.hoard)}</b>${esc(h.date_text)} · ${esc(h.place_text)}<br>Found ${esc(h.year_found)} · ${esc(h.museum)}<br><span style="opacity:.85">${esc(h.contents)}</span><br>` +
+      (h.country === "GB" && h.lat != null ? `<span style="color:var(--rust)">Norse names within 15 km: ${share}</span><br>Nearest: ${esc(h.nearest_norse_name)}, ${h.nearest_norse_km.toFixed(1)} km<br>` : (h.country === "IE" ? `<span style="opacity:.75">In Ireland: outside the place-name data.</span><br>` : "")) +
+      (h.article ? `<a href="${h.article}" target="_blank" rel="noopener">Wikipedia article</a> · ` : "") + `<a href="${h.list_url}" target="_blank" rel="noopener">List</a>`;
+  }
+  const HM = [];
+  function drawHoards() { lay.hoards.clearLayers(); lay.age.clearLayers(); HM.length = 0;
+    H.forEach(h => { if (h.lat == null) return; const vik = h.set_viking;
+      const m = L.circleMarker([h.lat, h.lon], { renderer: rH, radius: vik ? radius(h) : 4.5, weight: vik ? 2 : 1.4, color: vik ? col("--fg") : col("--silver"), fillColor: vik ? col("--silver") : col("--bg"), fillOpacity: vik ? .95 : .8, dashArray: h.precision.includes("approximate") ? "3 3" : null })
+        .bindPopup(popup(h), { maxWidth: 280, autoPanPadding: [20, 20] });
+      m.on("click", () => showCard(h)); m.addTo(vik ? lay.hoards : lay.age); HM.push([h, m]);
+      if (vik) L.circleMarker([h.lat, h.lon], { renderer: rH, radius: Math.max(1.5, radius(h) * .28), weight: 0, fillColor: col("--glint"), fillOpacity: .9, interactive: false }).addTo(lay.hoards); }); }
+  function showCard(h) { card.className = "card";
+    card.innerHTML = `<b class="t">${esc(h.hoard)}</b><dl><dt>Date</dt><dd>${esc(h.date_text)}</dd><dt>Place</dt><dd>${esc(h.place_text)}</dd><dt>Found</dt><dd>${esc(h.year_found)}</dd><dt>Pieces</dt><dd>${h.pieces ? (h.approx ? "c. " : "") + fmt(h.pieces) : "not stated"}</dd>` +
+      (h.norse_share_15km != null ? `<dt>Norse, 15 km</dt><dd style="color:var(--rust);font-weight:500">${h.norse_n_15km} of ${fmt(h.settle_n_15km)} (${pc(h.norse_share_15km, 1)})</dd><dt>Nearest</dt><dd>${esc(h.nearest_norse_name)}, ${h.nearest_norse_km.toFixed(1)} km</dd><dt>Verdict</dt><dd>${VERD[h.verdict]}</dd>` : `<dt>Test</dt><dd>${h.country === "IE" ? "Ireland: no place-name data" : "not located precisely enough"}</dd>`) +
+      `<dt>Located by</dt><dd>${esc(h.precision)}</dd></dl>`; }
+  function sync() { for (const k of ["names", "dens", "age", "other", "dane"]) { if (on[k]) lay[k].addTo(map); else lay[k].remove(); } legend(); }
+  [["bNames", "names"], ["bDens", "dens"], ["bAge", "age"], ["bOther", "other"], ["bDane", "dane"]].forEach(([id, k]) => { const b = document.getElementById(id); b.onclick = () => { on[k] = !on[k]; b.setAttribute("aria-pressed", on[k]); sync(); }; });
+  document.getElementById("elem").onchange = e => { elem = e.target.value; drawNames(); legend(); };
+  function legend() { const L2 = [`<span><i style="background:var(--silver);outline:2px solid var(--fg);outline-offset:-1px"></i>Viking hoard (size = pieces)</span>`];
+    if (on.age) L2.push(`<span><i style="background:var(--bg);border:1.5px solid var(--silver)"></i>Other hoard dated 793 to 1066</span>`);
+    if (on.other) L2.push(`<span><i style="background:color-mix(in srgb,var(--moss) 30%,transparent);border:1.5px solid var(--moss)"></i>Hoard of another period</span>`);
+    if (on.names) L2.push(`<span><i style="background:var(--rust)"></i>${elem ? ELAB[elem] : "Norse-named settlement"}</span>`);
+    if (on.dens) L2.push(`<span><i style="background:var(--rust);opacity:.4;width:14px;height:14px"></i>Norse names per 10 km square</span>`);
+    if (on.dane) L2.push(`<span><i class="ln"></i>Danelaw line (approx.)</span>`);
+    document.getElementById("legend").innerHTML = L2.join(""); }
+  const hl = document.getElementById("hlist");
+  [...H].filter(h => h.set_viking).sort((a, b) => a.date_sort - b.date_sort).forEach(h => { const li = document.createElement("li"); li.tabIndex = 0;
+    const c = h.verdict === "silver among names" ? "var(--rust)" : h.verdict === "silver without names" ? "var(--silver)" : "var(--dot)";
+    const dt = h.date_text.replace(" century", " c."); li.innerHTML = `<i style="background:${c}"></i><span class="nm">${esc(short(h.hoard))}</span><span class="v">${esc(dt.charAt(0).toLowerCase() + dt.slice(1))}</span>`;
+    const go = () => { showCard(h); if (h.lat == null) return; map.flyTo([h.lat, h.lon], 10, { duration: reduce ? 0 : .8 }); const m = HM.find(x => x[0] === h); if (m) setTimeout(() => m[1].openPopup(), reduce ? 0 : 850); };
+    li.onclick = go; li.onkeydown = e => { if (e.key === "Enter") go(); }; hl.appendChild(li); });
+  document.getElementById("goCuerdale").onclick = e => { e.preventDefault(); const h = H.find(x => x.hoard === "Cuerdale Hoard"); document.getElementById("map").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); map.setView([h.lat, h.lon], 10); showCard(h); const m = HM.find(x => x[0] === h); m && m[1].openPopup(); };
+  window.__restyle = () => { for (const k in C) delete C[k]; tiles.setUrl(tileUrl()); drawNames(); drawDens(); drawOther(); drawDane(); drawHoards(); };
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", window.__restyle);
+  window.__select = n => { const h = H.find(x => x.hoard.startsWith(n)); if (h) { map.setView([h.lat, h.lon], 10, { animate: false }); showCard(h); const m = HM.find(x => x[0] === h); m && m[1].openPopup(); } return !!h; };
+  window.__toggle = id => document.getElementById(id).click();
+  drawNames(); drawDens(); drawOther(); drawDane(); drawHoards(); sync();
+})();
+
+/* ===== share chart ===== */
+(() => { let r = 15; const box = document.getElementById("share");
+  document.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { r = +b.dataset.r; document.querySelectorAll("[data-r]").forEach(x => x.setAttribute("aria-pressed", +x.dataset.r === r)); draw(); });
+  let draw = () => {};
+  resp(box, (W, nar) => { draw = () => { box.innerHTML = ""; render(box.clientWidth, box.clientWidth < 560); }; render(W, nar); });
+  function render(W, nar) {
+    const V = H.filter(h => h.set_viking && h.in_stats).sort((a, b) => b["norse_share_" + r + "km"] - a["norse_share_" + r + "km"]);
+    const rowH = 22, m = { l: nar ? 112 : 170, r: 18, t: 34, b: 40 }, Ht = V.length * rowH + m.t + m.b;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${Ht}`, role: "img", "aria-label": "Share of settlements with Norse names around each Viking hoard" }, box);
+    const o = R.overlap["r" + r], max = Math.max(.35, Math.ceil(Math.max(...V.map(h => h["norse_share_" + r + "km"])) * 20) / 20), X = v => m.l + v / max * (W - m.l - m.r);
+    for (let t = 0; t <= max + 1e-9; t += .05) { el("line", { x1: X(t), x2: X(t), y1: m.t - 6, y2: Ht - m.b, stroke: "var(--rule)" }, svg); lbl(svg, X(t), Ht - m.b + 16, pc(t), "lab m s", "middle"); }
+    lbl(svg, nar ? W / 2 : (W + m.l) / 2, Ht - 6, nar ? `Norse share, ${r} km circle` : `Norse-named share of settlements within ${r} km`, "lab m s", "middle");
+    const refs = [[o.viking_vs_settlements_gb.random_mean, "--dot", "Random place"], [o.other_periods_mean, "--moss", "Other hoards"], [o.viking_mean, "--rust", "Viking hoards"]];
+    refs.forEach(([v, c, t], i) => { el("line", { x1: X(v), x2: X(v), y1: m.t - 6, y2: Ht - m.b, stroke: `var(${c})`, "stroke-width": 2, "stroke-dasharray": i === 2 ? "" : "4 3" }, svg);
+      lbl(svg, X(v) + (i === 1 ? 4 : i === 0 ? -4 : 4), m.t - 12 - (i === 1 ? 12 : 0), `${t} ${pc(v, 1)}`, "lab s b", i === 0 ? "end" : "start").setAttribute("style", `fill:var(${c})`); });
+    V.forEach((h, i) => { const y = m.t + i * rowH + rowH / 2, v = h["norse_share_" + r + "km"];
+      lbl(svg, m.l - 10, y + 4, short(h.hoard).replace("Vale of York", "Vale of York"), "lab s", "end");
+      el("line", { x1: X(0), x2: X(v), y1: y, y2: y, stroke: "var(--silver)", "stroke-width": 2, opacity: .5 }, svg);
+      const c = el("circle", { cx: X(v), cy: y, r: 6.5, fill: v === 0 ? "var(--bg)" : "var(--silver)", stroke: "var(--fg)", "stroke-width": 1.5 }, svg);
+      hover(c, `<b>${esc(h.hoard)}</b><br>${pc(v, 1)} of settlements within ${r} km have Norse names`); });
+  }
+})();
+
+/* ===== Danelaw bars ===== */
+resp(document.getElementById("dane"), (W, nar) => {
+  const d = R.danelaw, rows = [["Norse-named settlements", d.norse_names.share, d.norse_names.n, "--rust"], ["Viking hoards", d.viking.share, d.viking.n, "--silver"], ["Other hoards, 793 to 1066", d.other_dated.share, d.other_dated.n, "--gold"], ["Hoards of other periods", d.other_periods.share, d.other_periods.n, "--moss"], ["All settlements", d.settlements.share, d.settlements.n, "--dot"]];
+  const rowH = 36, m = { l: nar ? 132 : 210, r: 58, t: 6, b: 26 }, Ht = rows.length * rowH + m.t + m.b;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${Ht}`, role: "img", "aria-label": "Share north and east of the Danelaw line" }, document.getElementById("dane")), X = v => m.l + v * (W - m.l - m.r);
+  [0, .25, .5, .75, 1].forEach(t => { el("line", { x1: X(t), x2: X(t), y1: m.t, y2: Ht - m.b, stroke: "var(--rule)" }, svg); lbl(svg, X(t), Ht - 8, pc(t), "lab m s", "middle"); });
+  rows.forEach(([t, v, n, c], i) => { const y = m.t + i * rowH; lbl(svg, m.l - 10, y + 22, nar ? ({ "Norse-named settlements": "Norse names", "Other hoards, 793 to 1066": "Other 793 to 1066", "Hoards of other periods": "Other periods" }[t] || t) : t, "lab s", "end");
+    const b = el("rect", { x: X(0), y: y + 8, width: X(v) - X(0), height: rowH - 14, fill: `var(${c})`, opacity: .9 }, svg);
+    hover(b, `<b>${t}</b><br>${pc(v, 1)} of ${fmt(n)} north and east of the line`); lbl(svg, X(v) + 6, y + 23, pc(v, 1), "lab b s"); });
+});
+
+/* ===== silver without names, Cuerdale names ===== */
+document.getElementById("nonames").innerHTML = H.filter(h => h.set_viking && h.verdict === "silver without names").map(h => `<li><b>${esc(short(h.hoard))}</b> · ${esc(h.place_text.split(";").pop().trim())} · nearest Norse name ${h.nearest_norse_km.toFixed(0)} km</li>`).join("");
+document.getElementById("cuerdale").innerHTML = R.cuerdale.norse_names_25km.map(([n, d]) => `<li><b>${esc(n)}</b> ${d.toFixed(1)} km</li>`).join("");
+
+/* ===== areas table ===== */
+document.getElementById("areas").innerHTML = `<thead><tr><th>Area</th><th class="num">Norse names</th><th class="num">Share</th><th class="num">Viking hoards</th><th class="num">Median km to one</th></tr></thead><tbody>` +
+  R.areas_top.map(a => `<tr><td>${esc(a.area)}</td><td class="num">${fmt(a.norse)}</td><td class="num">${pc(a.share, 1)}</td><td class="num ${a.viking_hoards ? "" : "z"}">${a.viking_hoards}</td><td class="num">${fmt(a.median_hoard_km)}</td></tr>`).join("") + "</tbody>";
+
+/* ===== water chart ===== */
+resp(document.getElementById("water"), (W, nar) => {
+  const w = R.water, groups = [["Viking hoards", "viking_median", "--silver", 7], ["Other hoards 793 to 1066", "other_dated_median", "--gold", 5], ["Hoards of other periods", "other_periods_median", "--moss", 5], ["Settlements", "settlements_median", "--dot", 5]];
+  const rows = [["Open coast", "coast_km"], ["Tidal water", "tidal_km"], ["Major river", "major_river_km"]];
+  const rowH = 54, m = { l: nar ? 92 : 120, r: 18, t: 8, b: nar ? 78 : 56 }, Ht = rows.length * rowH + m.t + m.b;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${Ht}`, role: "img", "aria-label": "Median distance to coast, tidal water and major rivers" }, document.getElementById("water"));
+  const max = 45, X = v => m.l + v / max * (W - m.l - m.r);
+  for (let t = 0; t <= max; t += 5) { el("line", { x1: X(t), x2: X(t), y1: m.t, y2: Ht - m.b, stroke: "var(--rule)" }, svg); if (!nar || t % 10 === 0) lbl(svg, X(t), Ht - m.b + 16, t + " km", "lab m s", "middle"); }
+  rows.forEach(([t, k], i) => { const y = m.t + i * rowH + rowH / 2; lbl(svg, m.l - 12, y + 4, t, "lab s b", "end");
+    el("line", { x1: X(Math.min(...groups.map(g => w[k][g[1]]))), x2: X(Math.max(...groups.map(g => w[k][g[1]]))), y1: y, y2: y, stroke: "var(--border)", "stroke-width": 2 }, svg);
+    groups.forEach(([g, f, c, rr]) => { const v = w[k][f]; const cc = el("circle", { cx: X(v), cy: y, r: rr, fill: `var(${c})`, stroke: f === "viking_median" ? "var(--fg)" : "var(--bg)", "stroke-width": 1.5 }, svg); hover(cc, `<b>${g}</b><br>${t}: median ${v.toFixed(1)} km`); }); });
+  let x = nar ? 4 : m.l, ly = Ht - (nar ? 46 : 14);
+  groups.forEach(([g, f, c], i) => { if (nar && i === 2) { x = 4; ly += 22; } el("circle", { cx: x + 5, cy: ly - 4, r: 5, fill: `var(${c})`, stroke: f === "viking_median" ? "var(--fg)" : "none" }, svg); lbl(svg, x + 14, ly, g, "lab s"); x += g.length * 7 + 34; });
+});
+
+/* ===== hoard sizes ===== */
+resp(document.getElementById("sizes"), (W, nar) => {
+  const V = H.filter(h => h.set_viking && h.pieces).sort((a, b) => b.pieces - a.pieces), rowH = 22, m = { l: nar ? 112 : 170, r: 64, t: 4, b: 30 }, Ht = V.length * rowH + m.t + m.b;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${Ht}`, role: "img", "aria-label": "Number of coins or items in each Viking hoard" }, document.getElementById("sizes"));
+  const lo = 0, hi = Math.log10(10000), X = v => m.l + (Math.log10(Math.max(1, v)) - lo) / (hi - lo) * (W - m.l - m.r);
+  [1, 10, 100, 1000, 10000].forEach(t => { el("line", { x1: X(t), x2: X(t), y1: m.t, y2: Ht - m.b, stroke: "var(--rule)" }, svg); lbl(svg, X(t), Ht - 10, fmt(t), "lab m s", "middle"); });
+  V.forEach((h, i) => { const y = m.t + i * rowH, big = h.hoard === "Cuerdale Hoard";
+    lbl(svg, m.l - 10, y + 15, short(h.hoard), big ? "lab s b" : "lab s", "end");
+    const b = el("rect", { x: X(1), y: y + 4, width: X(h.pieces) - X(1), height: rowH - 8, fill: big ? "var(--silver)" : "var(--slate)", opacity: big ? 1 : .55, stroke: big ? "var(--fg)" : "none" }, svg);
+    hover(b, `<b>${esc(h.hoard)}</b><br>${h.approx ? "about " : ""}${fmt(h.pieces)} ${h.coins && !h.objects ? "coins" : "pieces"}`);
+    lbl(svg, X(h.pieces) + 6, y + 15, (h.approx ? "c. " : "") + fmt(h.pieces), big ? "lab s b" : "lab s"); });
+});
+</script>
+</body>
+</html>
